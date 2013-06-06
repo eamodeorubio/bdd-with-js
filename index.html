@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>BDD with JS: Architecture, Tools &amp; Patterns</title>
+
+  <meta name="description"
+        content="Slides of my talk about BDD architecture, tools and patterns">
+  <meta name="author" content="Enrique Amodeo">
+
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"/>
+
+  <link rel="stylesheet" href="reveal.js-2.1/css/reveal.css">
+  <link rel="stylesheet" href="reveal.js-2.1/css/theme/default.css" id="theme">
+
+  <!-- For syntax highlighting -->
+  <link rel="stylesheet" href="reveal.js-2.1/lib/css/zenburn.css">
+
+  <style>
+      /* Aside */
+    .left {
+      float: left;
+    }
+
+    img.left {
+      margin: 0;
+      padding: 0;
+      width: 25%;
+    }
+
+    img.left + ul {
+      margin: 0;
+      width: 60%;
+    }
+
+      /* Figures with captions */
+    .reveal section figure {
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      width: 600px;
+      height: 400px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .reveal section figure > img {
+      width: 100%;
+      max-height: none;
+      border-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .reveal section figure > figcaption {
+      position: absolute;
+      bottom: 0.5em;
+      left: 0;
+      width: 100%;
+      border-style: none;
+      border-width: 0;
+      margin: 0;
+      padding: 0;
+      background-color: rgb(37, 33, 28);
+      background-color: rgba(37, 33, 28, 0.5);
+      font-size: 0.4em;
+      text-align: center;
+    }
+
+    .reveal section figure > figcaption {
+      line-height: 1.5em;
+      vertical-align: middle;
+    }
+
+    .reveal section figure > figcaption a {
+      line-height: 1.5em !important;
+    }
+
+      /* Cover */
+    .reveal section.cover footer {
+      line-height: 33px;
+      clear: both;
+    }
+
+    .reveal section.cover > footer {
+      position: absolute;
+      bottom: 0.5em;
+      left: 0;
+      border-style: none;
+      border-width: 0;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background-color: rgb(37, 33, 28);
+      background-color: rgba(37, 33, 28, 0.5);
+      font-size: 0.4em;
+      text-align: center;
+    }
+
+    .reveal section.cover footer img {
+      float: left;
+      margin: 0 1em 0 0;
+      padding: 0;
+      cursor: pointer;
+      border-style: none;
+    }
+
+    .reveal section.cover footer a,
+    .reveal section.cover footer span {
+      margin: 0;
+      padding: 0;
+      vertical-align: baseline;
+      line-height: 33px;
+    }
+
+      /* Separata */
+    .reveal section.separata hgroup {
+      margin-top: 0.5em;
+    }
+
+    .reveal section.separata hgroup h2,
+    .reveal section.separata hgroup h3,
+    .reveal section.separata hgroup h4 {
+      color: #F0F1EB;
+      text-shadow: #111150 0px 0px 0.2em;
+    }
+
+    .reveal section.separata figure {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .reveal section.separata figure > img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-style: none;
+      border-width: 0;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      z-index: -1;
+    }
+
+      /* Animation */
+    div.animation-container {
+      position: relative;
+      margin: 0 auto;
+      padding: 0;
+      width: 809px;
+      height: 399px;
+      background-color: transparent;
+      -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 6px 0px;
+      -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 6px 0px;
+      box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 6px 0px;
+      overflow: hidden;
+    }
+
+    .animation-container .frame,
+    .animation-container .frame > img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      border-style: none;
+      padding: 0;
+      margin: 0;
+      min-width: 100%;
+      max-width: none;
+      max-height: none;
+      box-shadow: none
+    }
+
+    .animation-container .frame > img.loader {
+      position: absolute;
+      top: 140px;
+      left: 180px;
+      border: 0;
+      border-style: none;
+      padding: 0;
+      margin: 0;
+      width: 126px;
+      min-width: 126px;
+      box-shadow: none;
+    }
+
+    .snippet {
+      font-family: monospace !important;
+    }
+
+    .reveal table.matrix {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .reveal table.matrix th.pivot {
+      border-style: none;
+    }
+
+    .reveal table.matrix th, .reveal table.matrix td {
+      border-style: solid;
+      border-width: 1px;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .reveal table.matrix td li {
+      list-style: none;
+    }
+
+    .reveal pre {
+      width:100%;
+    }
+
+    .reveal .bad {
+      color: red;
+      font-style: italic;
+    }
+
+    .reveal .small {
+      font-size: 0.6em;
+    }
+
+    .reveal .highlight {
+      background-color: #606000; /*#222230;*/
+      font-style: italic;
+    }
+  </style>
+  <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+  <script>
+    document.write('<link rel="stylesheet" href="reveal.js-2.1/css/print/' + ( window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">');
+  </script>
+
+  <!--[if lt IE 9]>
+  <script src="reveal.js-2.1/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+
+<!-- Any section element inside of this container is displayed as a slide -->
+<div class="slides">
+
+<section class="cover">
+  <h1>BDD with JS:</h1>
+  <h1>Tools, patterns &amp; Architecture</h1>
+  <p>
+    <small>By <a
+            href="http://eamodeorubio.wordpress.com/about/">Enrique
+      Amodeo</a> /
+      <a href="http://twitter.com/eamodeorubio">@eamodeorubio</a></small>
+  </p>
+  <footer>
+    <a rel="license"
+       href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+      <img alt="Creative Commons License"
+           src="http://i.creativecommons.org/l/by-nc-sa/2.0/88x31.png"/>
+    </a>
+    <span>This work is licensed under a </span>
+    <a rel="license"
+       href="http://creativecommons.org/licenses/by-nc-sa/2.0/">
+      Creative Commons Attribution-NonCommercial-ShareAlike 2.0 Generic
+      License
+    </a>
+  </footer>
+</section>
+
+<section>
+  <h2>Enrique Amodeo</h2>
+  <h4>(who is this guy?)</h4>
+
+  <img src="img/EnriqueAmodeo.jpg" class="left"
+       alt="[Enrique Amodeo, circa 2010]">
+  <ul>
+    <li>Working as a professional since 2000</li>
+    <li>Worked with JAVA/JEE and big companies</li>
+    <li>Has loved JS since 2005</li>
+    <li>Test infected</li>
+    <li>Enthusiast of the Agile/Lean way</li>
+    <li>Follow me at
+      <a href="https://twitter.com/eamodeorubio">@eamodeorubio</a></li>
+  </ul>
+</section>
+
+<!--
+<section>
+  <h2>My book</h2>
+  <h4>(REST/Hypermedia Web APIs)</h4>
+
+  <a href="https://leanpub.com/introduccion_apis_rest"><img src="img/book.jpeg"
+       alt="[Principios de diseño de APIs REST]" target="_blank"></a>
+  
+  <p><a href="https://leanpub.com/introduccion_apis_rest">https://leanpub.com/introduccion_apis_rest</a></p>
+</section>
+-->
+
+<section>
+  <h2>This talk</h2>
+  <ol>
+    <li>To cucumber or not to cucumber</li>
+    <li>No need to test the UI?</li>
+    <li>I want my UI tested</li>
+    <li>Testing xBrowser issues</li>
+    <li>Maintainable tests</li>
+    <li>Conclusions</li>
+  </ol>
+</section>
+
+<section class="separata">
+  <hgroup>
+    <h2 style="color: #FFD0B0;">To cucumber...</h2>
+    <h2 style="color: #FFD0B0;">or not to cucumber</h2>
+  </hgroup>
+  <figure>
+    <img src="./img/tocukeornot.png">
+  </figure>
+</section>
+
+<section>
+  <h2>Specification by example</h2>
+  <h4>(trendy)</h4>
+  <ul>
+    <li>Write your features in natural language</li>
+    <li class="fragment">Don't specify business rules...</li>
+    <li class="fragment">...but key <em>business examples</em></li>
+  </ul>
+  <ul class="fragment">
+    <li>Customer can read them</li>
+    <li>Customer can give you early feedback</li>
+    <li>Customer can even write some of them</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Gherkin</h2>
+  <h4>(a "pseudonatural" language)</h4>
+  <pre><code contenteditable><span class="keyword">Feature:</span> get cash from an ATM
+  <span class="keyword">Background:</span>
+    <span class="keyword">Given</span> the ATM has <span class="string">1000</span>
+    <span class="keyword">And</span> the user <span class="string">John is authenticated</span>
+    <span class="keyword">And</span> the user's account has <span class="string">5000</span>
+  <span class="keyword">Scenario:</span> success
+    <span class="keyword">When</span> the user asks the ATM for <span class="string">500</span>
+    <span class="keyword">Then</span> the ATM will have <span class="string">500</span>
+    <span class="keyword">And</span> the user's account will have <span class="string">4500</span>
+    <span class="keyword">And</span> the ATM will provide <span class="string">500</span> in cash
+  <span class="keyword">Scenario:</span> not enough money in the ATM
+    <span class="keyword">When</span> the user asks the ATM for <span class="string">1500</span>
+    <span class="keyword">Then</span> the ATM will have <span class="string">1000</span>
+    <span class="keyword">And</span> the user's account will have <span class="string">5000</span>
+    <span class="keyword">And</span> the ATM will notify the user it does not have enough cash</code></pre>
+</section>
+
+<section>
+  <h2>Cucumber</h2>
+  <h4>(in a nutshell)</h4>
+  <p>Will cucumber test the features?</p>
+  <p class="fragment">No, not really</p>
+  <ol class="fragment">
+    <li>Parse the gherkin</li>
+    <li>Match gherkin with your test functions</li>
+    <li>Execute the matched test functions</li>
+    <li>Generate a report</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Cucumber</h2>
+  <h4>(everywhere)</h4>
+  <ul>
+    <li>Ruby</li>
+    <li>JVM</li>
+    <li>... and <em>JS too</em></li>
+  </ul>
+</section>
+
+<section>
+  <h2>CucumberJS: Steps</h2>
+  <h4>(to setup, execute, assert)</h4>
+  <pre><code contenteditable>module.exports = function() {
+  this.World = require('./support/World');
+  this.Given("the ATM has $cash", function(cash,done){
+    this.ATM().cashAvailable(Number(cash), done);
+  });
+
+  this.When("the user asks the ATM for $cash", function(cash,done){
+    this.ATM().requestCash(Number(cash), done);
+  });
+
+  this.Then("the user's account will have $cash",
+   function(cash, done) {
+    this.DB().accountFor(this.userId).then(function(acc) {
+      expect(cash).to.be.eql(acc.cash);
+    }).then(done, done);
+  });
+};</code></pre>
+</section>
+
+<section>
+  <h2>CucumberJS: World</h2>
+  <h4>(utilities &amp; context)</h4>
+  <pre><code contenteditable>    // A new World will be created by scenario
+    module.exports = function(done) {
+      var db, atm;
+      this.DB = function() {
+        return db;
+      };
+      this.ATM = function() {
+        return atm;
+      };
+      openDB(function(DB) {
+        db = DB;
+        openUI(function(ui) {
+          atm = new ATM(db, ui);
+          done();
+        });
+      });
+    };</code></pre>
+</section>
+
+<section>
+  <h2>CucumberJS: Hooks</h2>
+  <h4>(refactor!)</h4>
+  <pre><code contenteditable>    // Before &amp; after each scenario
+    module.exports = function() {
+      this.Before(function(done) {
+        this.DB()
+            .eraseAll()
+            .createDefaultData()
+            .then(done, done);
+      });
+      this.After(function(done) {
+        var db = this.DB();
+        this.ATM()
+            .shutdown()
+            .fin(db.shutdown.bind(db))
+            .fin(done);
+      });
+    };
+  </code></pre>
+</section>
+
+<section>
+  <h2>CucumberJS: how do I run it?</h2>
+  <h4>(nodeJS)</h4>
+  <pre><code contenteditable>  // package.json
+  {
+    // ....
+    "scripts": {
+      "cucumber": "cucumber-js features/ -r features/step_defs/"
+    },
+    "devDependencies": {
+      "cucumber": "~0.3.0"
+    }
+  }
+  </code></pre>
+  <pre><code contenteditable>
+  $> NODE_ENV=test npm run-script cucumber
+  </code></pre>
+</section>
+
+<section>
+  <h2>YAGNI</h2>
+  <h4>(early customer feedback?)</h4>
+  <ul>
+    <li>My customer won't read the gherkin</li>
+    <li>My customer won't understand the gherkin</li>
+    <li>My customer won't be available</li>
+    <li>The technical team is the customer</li>
+    <li>I won't get value from gherkin</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Mocha</h2>
+  <h4>(early customer feedback?)</h4>
+  <ul>
+    <li>A JS testing framework</li>
+    <li>Not only for unit testing</li>
+    <li>It has a BDD like API available</li>
+  </ul>
+  <p class="fragment">Just write your functional tests!</p>
+</section>
+
+<section>
+  <h2>Mocha BDD interface</h2>
+  <h4>(describe/context/test)</h4>
+  <pre><code contenteditable>describe('Feature: get cash from an ATM:', function() {
+  context('Scenario: success', function() {
+    describe('When the user asks the ATM for 500', function() {
+
+      it('Then the ATM will have 500', function() {
+        expect(world().getATM().remainingCash()).to.be.eql(500);
+      });
+
+      it("Then the user's account will have 4500", function(done) {
+        world().getDB().accountFor(userId).then(function(acc) {
+          expect(cash).to.be.eql(acc.cash);
+        }).then(done, done);
+      });
+
+    });
+  });
+});</code></pre>
+  <p class="fragment"><span class="snippet">describe</span> and <span class="snippet">context</span> only for reports?</p>
+</section>
+
+<section>
+  <h2>Set up &amp; action</h2>
+  <h4>(a bit of refactor)</h4>
+  <pre><code contenteditable>var world = require('./support/world');
+describe('Feature: get cash from an ATM:', function() {
+  beforeEach(function(done) {
+    world().getATM().cashAvailable(Number(cash), done);
+  });
+  // Any other background set up ....
+  context('Scenario: success', function() {
+    beforeEach(function() {
+      // Any scenario specific setup, none in this case
+    });
+    describe('When the user asks the ATM for 500', function() {
+      beforeEach(function(done) {
+        world().getATM().requestCash(500, done);
+      });
+    });
+  });
+});</code></pre>
+</section>
+
+<section>
+  <h2>"Global" hooks</h2>
+  <h4>(start and stop your world)</h4>
+  <pre><code contenteditable>var world;
+before(function(done) {
+  world = new World(done);
+});
+
+beforeEach(function(done) {
+  world.getDB().eraseAll().createDefaultData().then(done, done);
+});
+
+afterEach(function(done) {
+  world.getATM().shutdown().fin(db.shutdown.bind(db)).fin(done);
+});
+
+module.exports = function() {
+  return world;
+};</code></pre>
+</section>
+
+<section>
+  <h2>Running Mocha</h2>
+  <h4>(with NPM)</h4>
+  <pre><code contenteditable>  // package.json
+  {
+    // ....
+    "scripts": {
+      "test": "mocha -u bdd -R dot --recursive test/unit/",
+      "bdd": "mocha -u bdd -R dot --recursive test/bdd/"
+    },
+    "devDependencies": {
+      "mocha": "~1.8.1"
+    }
+  }
+  </code></pre>
+  <pre><code contenteditable>
+  $> NODE_ENV=test npm run-script bdd
+  </code></pre>
+</section>
+
+<section>
+  <h2>Running Mocha</h2>
+  <h4>(with Grunt &amp; simplemocha)</h4>
+  <pre><code contenteditable>  grunt.initConfig({
+    // ....
+    simplemocha: {
+      options: {
+        timeout: 3000,
+        ui: 'bdd',
+        reporter: 'dot'
+      },
+      unit: {
+        files: { src: ['test/unit/**/*.js'] }
+      },
+      bdd: {
+        files: { src: ['test/bdd/**/*.js'] }
+      }
+    }
+  });</code></pre>
+  <pre><code contenteditable>  $> NODE_ENV=test grunt simplemocha:bdd</code></pre>
+</section>
+
+<section>
+  <h2>Mocha VS. CucumberJS</h2>
+  <h4>(it is your decision)</h4>
+  <ul>
+    <li>CucumberJS is more customer-friendly</li>
+    <li>Is mocha more developer friendly? Maybe</li>
+    <li>Mocha is more mature, CucumberJS still green!</li>
+    <li>Mocha is more integrated with other tools</li>
+    <li>Mocha for BDD is a bit more awkward</li>
+  </ul>
+</section>
+
+<section class="separata">
+  <hgroup>
+    <h2>Not testing the UI</h2>
+    <h4>(too expensive?)</h4>
+  </hgroup>
+  <figure>
+    <img src="./img/money.jpg">
+    <figcaption>
+      <span>Original By Jose Martins:</span>
+      <a href="http://www.flickr.com/photos/jlrfmartins/98678918/"
+         target="_blank">http://www.flickr.com/photos/jlrfmartins/98678918/</a>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Should my BDD attack the UI?</h2>
+  <h4>(it depends on...)</h4>
+  <ul>
+    <li>How much it will cost you (tech)</li>
+    <li>Do you really have that much logic in the UI?</li>
+    <li>Have you already unit tested your UI?</li>
+    <li>Is the UI generating many bugs?</li>
+  </ul>
+</section>
+
+<section>
+  <h2>A typical web app</h2>
+  <h4>(maybe yours looks similar)</h4>
+  <figure style="width: 620px;">
+    <img src="./img/arch.png">
+  </figure>
+</section>
+
+<section>
+  <h2>Why not?</h2>
+  <h4>(fast &amp; cheap)</h4>
+  <figure style="width: 700px;">
+    <img src="./img/bdd-api.png">
+  </figure>
+</section>
+
+<section>
+  <h2>Or even this?</h2>
+  <h4>(faster, cheaper)</h4>
+  <figure style="width: 700px;">
+    <img src="./img/bdd-domain.png">
+  </figure>
+</section>
+
+<section>
+  <h2>BDD only your domain</h2>
+  <h4>(simply use NodeJS)</h4>
+  <figure>
+    <img src="./img/bdd-domain-mocha.png">
+  </figure>
+  <p>Works for either Mocha or CucumberJS</p>
+  <p>100s of tests per second</p>
+</section>
+
+<section class="separata">
+  <hgroup>
+    <h2>I want my UI tested</h2>
+  </hgroup>
+  <figure>
+    <img src="./img/test.jpg">
+    <figcaption>
+      <span>Original By "Touring Club Suisse/Schweiz/Svizzero TCS":</span>
+      <a href="http://www.flickr.com/photos/touring_club/6073241403/"
+         target="_blank">http://www.flickr.com/photos/touring_club/6073241403/</a>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Classic BDD</h2>
+  <h4>(drive the UI)</h4>
+  <figure style="width: 600px;">
+    <img src="./img/bdd-ui.png">
+  </figure>
+</section>
+
+<section>
+  <h2>Faking the browser</h2>
+  <h4>(a good trade off)</h4>
+  <ul>
+    <li>No need to test for xBrowser issues</li>
+    <li>Only UI &amp; DOM logic worries me</li>
+    <li>Very fast!</li>
+    <li>ZombieJS!</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Going Zombie</h2>
+  <figure style="width: 700px">
+    <img src="./img/zombie-bdd.png">
+  </figure>
+</section>
+
+<section>
+  <h2>Headless browser</h2>
+  <h4>(you must be sure)</h4>
+  <ul>
+    <li>Real DOM!</li>
+    <li>Real browser quirks!</li>
+    <li>Real HTML5 (or lack of) features!</li>
+    <li>Not so fast as you think</li>
+    <li>More complex (start/stop, retrieve results)</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Enter PhantomJS</h2>
+  <figure style="width: 650px">
+    <img src="./img/phantomjs-bdd.png">
+  </figure>
+</section>
+
+<section>
+  <h2>PhantomJS</h2>
+  <h4>(not a silver bullet)</h4>
+  <ul>
+    <li>I want my NodeJS back!</li>
+    <li>Complex coordination: reporter/tests/SUT</li>
+    <li>Low level API (CasperJS gives a better API)</li>
+    <li>Only WebKit</li>
+    <li>What's the advantage over FF with XVFB?</li>
+  </ul>
+</section>
+
+<section class="separata">
+  <hgroup>
+    <h2>Testing x-browser issues</h2>
+  </hgroup>
+  <figure>
+    <img src="./img/xbrowser.jpg">
+    <figcaption>
+      <span>Original By J. Albert Bowden II:</span>
+      <a href="http://www.flickr.com/photos/jalbertbowdenii/6241261398/"
+         target="_blank">http://www.flickr.com/photos/jalbertbowdenii/6241261398/</a>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Multi browser test</h2>
+  <h4>(the only way)</h4>
+  <ul>
+    <li>Each browser is a different world</li>
+    <li>Complex coordination: reporter/tests/SUT</li>
+    <li>Do it for each browser!</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Enter Karma</h2>
+  <h4>(previously testacular)</h4>
+  <ul>
+    <li>A NodeJS tool</li>
+    <li>Multiple browser support (Chrome, IE, FF, Phantom)</li>
+    <li>Multiple testing framework support (MOCHA, JASMINE)</li>
+    <li>Extensible (but not well documented)</li>
+    <li>CucumberJS is not yet supported</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Good karma (1)</h2>
+  <figure style="width: 630px">
+    <img src="./img/karma-browsers.png">
+  </figure>
+  <p style="font-size:0.4em;">
+    <span>Web Page icon from</span>
+    <a href="http://commons.wikimedia.org/wiki/File:1328101978_Web-page.png"
+       target="_blank">http://commons.wikimedia.org/wiki/File:1328101978_Web-page.png</a>
+  </p>
+</section>
+
+<section>
+  <h2>Good karma (2)</h2>
+  <figure style="width: 670px">
+    <img src="./img/karma-bdd.png">
+  </figure>
+</section>
+
+<section>
+  <h2>Configuring Karma (1)</h2>
+  <pre><code contenteditable>
+    // karma.conf.js
+
+    reporters = ['dots', 'junit'];
+    port = 9876;
+    runnerPort = 9100;
+    logLevel = LOG_DEBUG;
+    browsers = ['Chrome', 'Firefox', 'PhantomJS'];
+    singleRun = false;
+
+    //....
+  </code></pre>
+</section>
+
+<section>
+  <h2>Configuring Karma (2)</h2>
+  <pre><code contenteditable>
+// karma.conf.js (continued)
+
+var BASE_DIR = 'src/test/bdd/';
+
+files = [
+  MOCHA,
+  MOCHA_ADAPTER, 
+  {pattern: BASE_DIR + "vendor/**/*.js", watched: false},
+  {pattern: 'node_modules/chai/chai.js', watched: false},
+  {pattern: BASE_DIR + '/features/**/*.js', watched: false},
+  {pattern: 'www/**', watched: false, included: false}
+];
+  </code></pre>
+</section>
+
+<section class="separata">
+  <hgroup>
+    <h2>Maintainable tests</h2>
+  </hgroup>
+  <figure>
+    <img src="./img/origami.jpg">
+    <figcaption>
+      <span>Original By Claudia Mont:</span>
+      <a href="http://www.flickr.com/photos/enpapelarte/3096576904/"
+         target="_blank">http://www.flickr.com/photos/enpapelarte/3096576904/</a>
+    </figcaption>
+  </figure>
+</section>
+<!-- 
+<section>
+  <h2>What if the UI changes?</h2>
+  <h4>(but the functionality does not)</h4>
+  <ul>
+    <li class="fragment">Should you change the gherkin?</li>
+    <li class="fragment">Should you change the steps?</li>
+    <li class="fragment">Should you change your mocha specs?</li>
+    <li class="fragment">What is the cost of changing any of these?</li>
+  </ul>
+</section>
+-->
+<section>
+  <h2>Avoid UI Coupling: Gherkin</h2>
+  <h4>(bad gherkin)</h4>
+  <pre><code contenteditable>
+
+  Scenario: success
+    When the user <span class="bad">enters 500 into the "amount" field</span>
+    And the user <span class="bad">press the submit button</span>
+    Then the ATM will have 500
+    And the user's account will have 4500
+    And the ATM will provide 500 in cash
+
+  </code></pre>
+  <p class="fragment">Trivial change in UI -&gt; Multiple changes in Gherkin and Steps</p>
+</section>
+
+<section>
+  <h2>Avoid UI Coupling: Steps</h2>
+  <h4>(bad step)</h4>
+  <pre><code contenteditable>
+  // ...
+
+  this.When("the user asks the ATM for $cash",function(cash, done){
+    browser.fill('amount', Number(cash))
+           .pressButton('submit')
+           .then(done, done);
+  });
+
+  // ...
+  </code></pre>
+  <p class="fragment">Trivial change in UI -&gt; Multiple Steps affected</p>
+</section>
+
+<section>
+  <h2>Avoid UI Coupling: Mocha</h2>
+  <h4>(bad specs)</h4>
+  <pre><code contenteditable>
+  // ...
+
+  describe('When the user asks the ATM for 500', function() {
+    beforeEach(function(done) {
+      browser.fill('amount', 500)
+             .pressButton('submit')
+             .then(done, done);
+    });
+
+    // ...
+  });
+
+  // ...
+  </code></pre>
+</section>
+
+<section>
+  <h2>The page object</h2>
+  <h4>(encapsulate UI)</h4>
+  <ul>
+    <li>Changes in UI?</li>
+    <li class="fragment">Change only your page object</li>
+    <li class="fragment">A new scenario?</li>
+    <li class="fragment">Reuse page object to drive the UI</li>
+    <li class="fragment">Complex page?</li>
+    <li class="fragment">Use composite page object</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Page object with Zombie</h2>
+  <pre><code contenteditable>var Browser = require('zombie');
+module.exports = function() {
+  var browser = new Browser({ site:baseURL });
+  this.userIsLoggedIn = function(userId) {
+    browser.cookies('.atm.com', '/')
+           .set(SESSION_COOKIE, newSessionToken(userId));
+  };
+  this.visitPage = function(pageName) {
+    return browser.visit('/' + pageName + '.html'); 
+  }; 
+  this.requestCash = function(money) {
+    return browser.fill('amount', money).pressButton('submit');
+  };
+  this.displayedCurrentAmount = function() {
+    return Number(browser.text('.current-amount'));
+  };
+};</code></pre>
+</section>
+
+<section>
+  <h2>Page object with a real browser</h2>
+  <h4>(the iframe trick)</h4>
+  <figure style="width: 700px">
+    <img src="./img/iframe.png">
+  </figure>
+  <p>Isolates the SUT</p>
+</section>
+
+<section>
+  <h2>Page object with a real browser</h2>
+  <h4>(visiting a page)</h4>
+  <pre><code contenteditable>var bdd = bdd || { count: 0 };
+bdd.UI = function () {
+  var childDOC, self = this, id='fr' + (bdd.count++);
+  this.visitPage = function(pageName, done) {
+    destroyIframeIfExists();
+
+    $('body').append('&lt;iframe id="'+frameId+'"&gt;&lt;/iframe&gt;');
+    
+    $('#' + frameId).load(function () {
+      childDOC = this.contentDocument;
+      setTimeout(done, 500); // Wait for app to initialize
+    });
+
+    $('#fr1').attr('src', '/' + pageName + '.html');
+  };
+  // ...
+};</code></pre>
+</section>
+
+<section>
+  <h2>Page object with a real browser</h2>
+  <h4>(filling a form)</h4>
+  <pre><code contenteditable>
+  // ...
+
+  this.requestCash = function(money, done) {
+    $('input[name="amount"]', childDOC).val(text)
+                                       .trigger('keyup')
+                                       .trigger('change');
+
+    $('button[type="submit"]', childDOC).focus().click();
+
+    done();
+  };
+
+  // ...
+  </code></pre>
+</section>
+
+<section>
+  <h2>Page object with a real browser</h2>
+  <h4>(simulating events)</h4>
+  <pre><code contenteditable>
+  this.requestCash = function(money, done) {
+    $('input[name="amount"]', childDOC).simulate("key-sequence", {
+      sequence: String(money),
+      callback: function () {
+        $('button[type="submit"]', childDOC).simulate('click');
+
+        done();
+      }
+    });
+  };
+  </code></pre>
+  <p class="small">Using jQuery simulate <a href="https://github.com/eduardolundgren/jquery-simulate">https://github.com/eduardolundgren/jquery-simulate</a></p>
+  <p class="small">and jQuery simulate extensions <a href="https://github.com/j-ulrich/jquery-simulate-ext">https://github.com/j-ulrich/jquery-simulate-ext</a></p>
+</section>
+
+<section>
+  <h2>Page object with a real browser</h2>
+  <h4>(inspecting the page)</h4>
+  <pre><code contenteditable>
+  // ...
+
+  this.displayedCurrentAmount = function() {
+    return Number($('.current-amount', childDOC).first().text());
+  };
+
+  // ...
+  </code></pre>
+</section>
+
+<section>
+  <h2>Page object factory</h2>
+  <h4>(declarative page objects)</h4>
+  <pre><code contenteditable>  bdd.definePageObject('ui', {
+    requestCash: {
+      selector: 'form.request-cash',
+      fields: { amount: 'input[name="amount"]' },
+      submit: 'button[type="submit"]'
+    },
+    displayedCurrentAmount: {
+      selector: '.current-amount',
+      conversor: Number
+    }
+  });
+
+  bdd.newPageObject('ui').visitPage('atm')
+                         .requestCash({amount: 500})
+                         .then(done, done);</code></pre>
+  <p>It could be nice to get rid of all the boilerplate!</p>
+</section>
+
+<section>
+  <h2>Decouple set up too!</h2>
+  <h4>(a "page object" for test data)</h4>
+  <pre><code contenteditable>module.exports = function() {
+  this.World = require('./support/World');
+  this.Given("the ATM has $cash", function(cash,done){
+    <em class="highlight">this.ATM().cashAvailable(Number(cash), done);</em>
+  });
+
+  this.When("the user asks the ATM for $cash", function(cash,done){
+    this.ATM().requestCash(Number(cash), done);
+  });
+
+  this.Then("the user's account will have $cash",
+   function(cash, done) {
+    <em class="highlight">this.DB().accountFor(this.userId)</em>.then(function(acc) {
+      expect(cash).to.be.eql(acc.cash);
+    }).then(done, done);
+  });
+};</code></pre>
+</section>
+<!--
+<section>
+  <h2>Decoupling your test logic</h2>
+  <h4>(extract test functions)</h4>
+  <pre><code contenteditable>module.exports = {
+  theATMHasCash: function(cash, done) {
+    this.ATM().cashAvailable(Number(cash), done);
+  },
+
+  theUserAsksTheATMForCash: function(cash, done) {
+    this.ATM().requestCash(Number(cash), done);
+  },
+
+  theUserAccountWillHaveCash: function(cash, done) {
+    this.DB().accountFor(this.userId).then(function(acc) {
+      expect(cash).to.be.eql(acc.cash);
+    }).then(done, done);
+  }
+};</code></pre>
+</section>
+
+<section>
+  <h2>Decoupling your test logic</h2>
+  <h4>(Cucumber)</h4>
+  <pre><code contenteditable>module.exports = function() {
+  var step = require('./support/test-logic');
+  this.World = require('./support/World');
+  this.Given("the ATM has $cash", step.theATMHasCash);
+
+  this.When("the user asks the ATM for $cash", step.theUserAsksTheATMForCash);
+
+  this.Then("the user's account will have $cash", step.theUserAccountWillHaveCash);
+};</code></pre>
+</section>
+-->
+<section class="separata">
+  <hgroup>
+    <h2>Conclusions</h2>
+
+    <h3>(it's all about trade offs)</h3>
+  </hgroup>
+  <figure>
+    <img src="./img/notes.jpg">
+    <figcaption>
+      <span>Original by Mike Ambs: </span>
+      <a href="http://www.flickr.com/photos/mike_1630/1227622542/"
+         target="_blank">http://bit.ly/10IWmrY</a>
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>What JS gives us?</h2>
+  <h4>(compared with other languages)</h4>
+  <ul>
+    <li>Simple page objects</li>
+    <li>Direct access to DOM</li>
+    <li>No need to add an extra layer (Selenium, WebDriver, Capybara...)</li>
+    <li>Same language/platform as the UI</li>
+    <li>Same skills as the UI</li>
+    <li>The tools are now ok!</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Making hard decisions</h2>
+  <h4>(usually early in the project)</h4>
+  <ul>
+    <li>Should I use BDD at all?</li>
+    <li>Should I use gherkin?</li>
+    <li>Should I test the UI or only the core?</li>
+    <li>JS tool ecosystem changes very fast!</li>
+    <li>I'd like to change my mind in the future</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Deferring our technical decisions</h2>
+  <h4>(invest in good testing architecture)</h4>
+  <figure style="height:100%">
+    <img src="./img/bdd-arch-simple.png">
+  </figure>
+  <p>You can start cheap &amp; simple</p>
+</section>
+
+<section>
+  <h2>Changed your mind?</h2>
+  <figure style="height: 100%">
+    <img src="./img/bdd-arch-full.png">
+  </figure>
+  <p>You can evolve to a more complex testing platform</p>
+</section>
+
+<section>
+  <h2>Some code</h2>
+  <p>For CucumberJS with page object using ZombieJS: <a href="https://github.com/eamodeorubio/explore-the-todo-list-app/tree/cuke">http://bit.ly/ZKApZH</a><p>
+  <p>For Mocha, Karma &amp; the <spanc lass="snippet">iframe</span> page object: <a href="https://github.com/eamodeorubio/explore-the-todo-list-app">http://bit.ly/ysoZHx</a><p>
+  <p>Warning: There is still some code to clean up there!<p>
+</section>
+
+<section class="separata">
+  <hgroup>
+    <h1>The End</h1>
+
+    <h2>Some questions?</h2>
+  </hgroup>
+  <figure>
+    <img src="./img/questions.jpg">
+    <figcaption>
+      <span>Original by Ethan Lofton: </span>
+      <a href="http://www.flickr.com/photos/eleaf/2536358399/"
+         target="_blank">http://bit.ly/1arHGj</a>
+    </figcaption>
+  </figure>
+</section>
+
+</div>
+
+</div>
+
+<script src="reveal.js-2.1/lib/js/head.min.js"></script>
+<script src="reveal.js-2.1/js/reveal.min.js"></script>
+
+<script>
+
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/none
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: 'reveal.js-2.1/lib/js/classList.js', condition: function () {
+        return !document.body.classList;
+      } },
+      { src: 'reveal.js-2.1/plugin/markdown/showdown.js', condition: function () {
+        return !!document.querySelector('[data-markdown]');
+      } },
+      { src: 'reveal.js-2.1/plugin/markdown/markdown.js', condition: function () {
+        return !!document.querySelector('[data-markdown]');
+      } },
+      { 
+        src: 'reveal.js-2.1/plugin/highlight/highlight.js',
+        async: true,
+        callback: function () {
+          /*console.log('XXXXX');
+          hljs.LANGUAGES.gherkin_en = {
+            defaultMode: {
+              contains: [
+                {
+                  className: 'keyword',
+                  begin: '^\\s*(But |And |Then |When |Given |\\* |Scenarios|Examples|Scenario Template|Scenario Outline|Scenario|Background|Feature)',
+                  relevance: 0
+                },
+                {
+                  className: 'string',
+                  begin: '\\|',
+                  relevance: 0
+                },
+                hljs.HASH_COMMENT_MODE,
+                {
+                  className: 'string',
+                  begin: '"""', end: '"""',
+                  relevance: 10
+                },
+                hljs.APOS_STRING_MODE, 
+                hljs.QUOTE_STRING_MODE,
+                hljs.C_NUMBER_MODE,
+                {
+                  className: 'annotation', begin: '@[^@\r\n\t ]+'
+                }
+              ]
+            }
+          };
+*/
+          hljs.initHighlightingOnLoad(); 
+        }
+      },
+      /*{
+        src: 'reveal.js-2.1/plugin/highlight/gherkin_en.js',
+        async: true,
+        
+        callback: function () {
+          console.log('XXXXX');
+          hljs.initHighlightingOnLoad(); 
+        }
+      },*/
+      { src: 'reveal.js-2.1/plugin/zoom-js/zoom.js', async: true, condition: function () {
+        return !!document.body.classList;
+      } },
+      { src: 'reveal.js-2.1/plugin/notes/notes.js', async: true, condition: function () {
+        return !!document.body.classList;
+      } }
+    ]
+  });
+
+</script>
+
+</body>
+</html>
